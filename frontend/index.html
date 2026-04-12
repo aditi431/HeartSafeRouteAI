@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoNav AI — Exposure Credit Navigator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e17;--bg2:#111827;--bg3:#1e293b;
+  --fg:#e2e8f0;--fg2:#94a3b8;--fg3:#64748b;
+  --accent:#10b981;--accent2:#06d6a0;--accent3:#34d399;
+  --danger:#ef4444;--warn:#f59e0b;--info:#3b82f6;
+  --card:rgba(30,41,59,.65);--glass:rgba(255,255,255,.04);
+  --glow:0 0 40px rgba(16,185,129,.15);
+  --radius:16px;--radius-sm:10px;
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);
+  min-height:100vh;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%,rgba(16,185,129,.08),transparent),
+    radial-gradient(ellipse 60% 40% at 80% 100%,rgba(59,130,246,.06),transparent);
+}
+.mono{font-family:'Space Mono',monospace}
+
+/* Layout */
+.shell{max-width:1400px;margin:0 auto;padding:24px 20px}
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 0 32px;border-bottom:1px solid rgba(255,255,255,.06);
+  margin-bottom:32px;flex-wrap:wrap;gap:16px;
+}
+.logo{display:flex;align-items:center;gap:14px}
+.logo-icon{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,#10b981,#06d6a0);
+  display:grid;place-items:center;font-size:24px;
+  box-shadow:0 4px 20px rgba(16,185,129,.3);
+}
+.logo h1{font-size:1.5rem;font-weight:700;letter-spacing:-.02em}
+.logo p{font-size:.8rem;color:var(--fg2);margin-top:2px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:20px;font-size:.75rem;font-weight:500;
+  background:rgba(16,185,129,.12);color:var(--accent);
+  border:1px solid rgba(16,185,129,.2);
+}
+.badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Cards */
+.card{
+  background:var(--card);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:var(--radius);padding:24px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.card:hover{border-color:rgba(16,185,129,.15);box-shadow:var(--glow)}
+.card-title{font-size:.85rem;color:var(--fg2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;font-weight:500}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+.mb{margin-bottom:24px}
+
+/* Stat cards */
+.stat{text-align:center;padding:20px 16px}
+.stat-value{font-size:2rem;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.stat-label{font-size:.75rem;color:var(--fg2);margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+.stat-value.green{color:var(--accent)}
+.stat-value.red{color:var(--danger)}
+.stat-value.yellow{color:var(--warn)}
+.stat-value.blue{color:var(--info)}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 22px;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;
+  cursor:pointer;border:none;transition:all .15s;font-family:inherit;
+}
+.btn-primary{background:linear-gradient(135deg,#10b981,#06d6a0);color:#0a0e17}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(16,185,129,.35)}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,.12);color:var(--fg)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
+.btn-sm{padding:7px 16px;font-size:.78rem}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+
+/* Select */
+select{
+  appearance:none;background:var(--bg3);color:var(--fg);
+  border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);
+  padding:10px 36px 10px 14px;font-size:.85rem;font-family:inherit;
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+select:focus{outline:none;border-color:var(--accent)}
+
+/* Graph Canvas */
+.graph-container{
+  position:relative;width:100%;height:480px;
+  border-radius:var(--radius);overflow:hidden;
+  background:
+    radial-gradient(ellipse at 30% 40%,rgba(16,185,129,.04),transparent 60%),
+    linear-gradient(180deg,rgba(17,24,39,.8),rgba(10,14,23,.95));
+}
+.graph-container svg{width:100%;height:100%}
+
+/* Node styles */
+.node-circle{transition:r .2s,filter .2s;cursor:pointer}
+.node-circle:hover{filter:brightness(1.3)}
+.node-label{font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;fill:#fff;pointer-events:none;text-anchor:middle}
+.node-sublabel{font-family:'DM Sans',sans-serif;font-size:10px;fill:rgba(255,255,255,.6);pointer-events:none;text-anchor:middle}
+.edge-line{stroke:rgba(255,255,255,.08);stroke-width:2;transition:stroke .3s,stroke-width .3s}
+.edge-line.active{stroke:var(--accent);stroke-width:3;filter:drop-shadow(0 0 6px rgba(16,185,129,.4))}
+.edge-label{font-family:'Space Mono',monospace;font-size:9px;fill:rgba(255,255,255,.35);text-anchor:middle}
+
+/* Log */
+.log-panel{
+  max-height:320px;overflow-y:auto;
+  font-family:'Space Mono',monospace;font-size:.78rem;
+  line-height:1.8;color:var(--fg2);
+  padding:4px 0;
+}
+.log-panel::-webkit-scrollbar{width:4px}
+.log-panel::-webkit-scrollbar-thumb{background:var(--fg3);border-radius:2px}
+.log-entry{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.log-entry .step-badge{
+  display:inline-block;padding:1px 8px;border-radius:4px;font-size:.7rem;
+  background:rgba(16,185,129,.12);color:var(--accent);margin-right:8px;
+}
+.log-entry .reward-pos{color:var(--accent)}
+.log-entry .reward-neg{color:var(--danger)}
+
+/* Route trail */
+.route-trail{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:12px 0}
+.route-node{
+  padding:6px 14px;border-radius:8px;font-size:.8rem;font-weight:600;
+  background:var(--bg3);border:1px solid rgba(255,255,255,.08);
+  position:relative;
+}
+.route-node.current{background:rgba(16,185,129,.2);border-color:var(--accent);color:var(--accent)}
+.route-node.dest{background:rgba(59,130,246,.15);border-color:var(--info);color:var(--info)}
+.route-arrow{color:var(--fg3);font-size:.7rem;margin:0 4px}
+
+/* Grade badge */
+.grade-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:48px;height:48px;border-radius:12px;font-size:1.4rem;font-weight:700;
+}
+.grade-A{background:rgba(16,185,129,.2);color:#10b981}
+.grade-B{background:rgba(245,158,11,.15);color:#f59e0b}
+.grade-C{background:rgba(249,115,22,.15);color:#f97316}
+.grade-D{background:rgba(239,68,68,.15);color:#ef4444}
+.grade-F{background:rgba(127,29,29,.2);color:#fca5a5}
+
+/* Neighbors table */
+.nb-table{width:100%;border-collapse:collapse}
+.nb-table th{
+  text-align:left;font-size:.72rem;color:var(--fg3);text-transform:uppercase;
+  letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nb-table td{padding:10px;font-size:.82rem;border-bottom:1px solid rgba(255,255,255,.03)}
+.nb-table tr:hover td{background:rgba(255,255,255,.02)}
+.nb-table .move-btn{
+  padding:5px 14px;border-radius:6px;border:1px solid rgba(16,185,129,.3);
+  background:rgba(16,185,129,.1);color:var(--accent);cursor:pointer;
+  font-size:.78rem;font-weight:600;font-family:inherit;transition:all .15s;
+}
+.nb-table .move-btn:hover{background:rgba(16,185,129,.25);transform:scale(1.02)}
+.nb-table .move-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* AQI chips */
+.aqi-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;
+}
+.aqi-A{background:rgba(16,185,129,.15);color:#10b981}
+.aqi-B{background:rgba(245,158,11,.12);color:#f59e0b}
+.aqi-C{background:rgba(249,115,22,.12);color:#f97316}
+.aqi-D{background:rgba(239,68,68,.12);color:#ef4444}
+.aqi-E{background:rgba(168,85,247,.12);color:#a855f7}
+.aqi-F{background:rgba(127,29,29,.2);color:#fca5a5}
+
+/* Toasts */
+.toast{
+  position:fixed;top:20px;right:20px;z-index:999;
+  padding:14px 22px;border-radius:var(--radius-sm);
+  font-size:.85rem;font-weight:500;
+  animation:slideIn .3s ease;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.toast.success{background:#065f46;color:#a7f3d0;border:1px solid rgba(16,185,129,.3)}
+.toast.error{background:#7f1d1d;color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.toast.info{background:#1e3a5f;color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Sections */
+.section-title{
+  font-size:1.1rem;font-weight:700;margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+
+/* Loading */
+.spinner{
+  width:20px;height:20px;border:2px solid rgba(255,255,255,.1);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .6s linear infinite;display:inline-block;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Task cards */
+.task-card{
+  padding:18px;border-radius:var(--radius-sm);cursor:pointer;
+  border:1px solid rgba(255,255,255,.06);background:var(--glass);
+  transition:all .2s;
+}
+.task-card:hover{border-color:rgba(16,185,129,.2);background:rgba(16,185,129,.04)}
+.task-card.active{border-color:var(--accent);background:rgba(16,185,129,.08)}
+.task-card .diff{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.diff-easy{color:#10b981}.diff-medium{color:#f59e0b}.diff-hard{color:#ef4444}
+
+/* Score bar */
+.score-bar{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden;margin-top:8px}
+.score-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+
+/* Fade in animation */
+.fade-in{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="shell" id="app">
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🌿</div>
+    <div>
+      <h1>EcoNav AI</h1>
+      <p>Exposure Credit Navigator — OpenEnv RL Environment</p>
+    </div>
+  </div>
+  <div class="badge">Environment Active</div>
+</header>
+
+<!-- Task Selector -->
+<div class="mb">
+  <div class="section-title"><span class="dot"></span>Select Task</div>
+  <div class="grid-3" id="task-cards"></div>
+</div>
+
+<!-- Stats Row -->
+<div class="grid-4 mb" id="stats-row">
+  <div class="card stat"><div class="stat-value green" id="s-credits">100</div><div class="stat-label">Exposure Credits</div></div>
+  <div class="card stat"><div class="stat-value blue" id="s-steps">0 / 15</div><div class="stat-label">Steps Used</div></div>
+  <div class="card stat"><div class="stat-value yellow" id="s-exposure">0.0</div><div class="stat-label">Total Exposure</div></div>
+  <div class="card stat"><div class="stat-value" id="s-score">—</div><div class="stat-label">Episode Score</div></div>
+</div>
+
+<!-- Main area: Graph + Controls -->
+<div class="grid-2 mb">
+  <!-- Graph -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="graph-container" id="graph-canvas"></div>
+  </div>
+
+  <!-- Right Panel -->
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <!-- Route Trail -->
+    <div class="card">
+      <div class="card-title">Route Progress</div>
+      <div class="route-trail" id="route-trail"><span style="color:var(--fg3);font-size:.82rem">Press Start to begin</span></div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="btn-start" onclick="startEpisode()">▶ Start Episode</button>
+        <button class="btn btn-outline" id="btn-auto" onclick="runAutoAgent()" disabled>⚡ Auto Agent</button>
+        <button class="btn btn-danger btn-sm" id="btn-reset" onclick="resetEnv()" disabled>↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- Available Moves -->
+    <div class="card" style="flex:1;overflow-y:auto">
+      <div class="card-title">Available Moves</div>
+      <table class="nb-table">
+        <thead><tr><th>City</th><th>AQI</th><th>Credits</th><th>Dist</th><th></th></tr></thead>
+        <tbody id="neighbors-body"><tr><td colspan="5" style="color:var(--fg3)">Start an episode to see moves</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom: Log + Grade -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Episode Log</div>
+    <div class="log-panel" id="log-panel">
+      <div class="log-entry" style="color:var(--fg3)">Waiting for episode...</div>
+    </div>
+  </div>
+  <div class="card" id="grade-panel" style="display:none">
+    <div class="card-title">Episode Grade</div>
+    <div id="grade-content"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// =========================================================================
+// State
+// =========================================================================
+const API = window.location.origin;
+let currentTask = 'easy_route';
+let obs = null;
+let done = false;
+let logs = [];
+let stepCount = 0;
+
+// =========================================================================
+// City positions for graph visualization (normalized 0-1)
+// =========================================================================
+const CITY_POS = {
+  A:{x:.35,y:.15},  // Delhi
+  B:{x:.12,y:.35},  // Jaipur
+  C:{x:.38,y:.35},  // Agra
+  D:{x:.62,y:.50},  // Varanasi
+  E:{x:.48,y:.55},  // Lucknow
+  F:{x:.88,y:.75},  // Kolkata
+  G:{x:.22,y:.08},  // Chandigarh
+  H:{x:.20,y:.65},  // Bhopal
+  I:{x:.72,y:.38},  // Patna
+};
+
+const GRADE_COLORS = {
+  A:'#10b981',B:'#f59e0b',C:'#f97316',D:'#ef4444',E:'#a855f7',F:'#7f1d1d'
+};
+
+// =========================================================================
+// Utilities
+// =========================================================================
+function toast(msg, type='info') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+async function api(method, path, body) {
+  try {
+    const opts = { method, headers: {'Content-Type':'application/json'} };
+    if (body) opts.body = JSON.stringify(body);
+    const r = await fetch(API + path, opts);
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.detail || r.statusText); }
+    return await r.json();
+  } catch(e) { toast(e.message, 'error'); throw e; }
+}
+
+// =========================================================================
+// Task Cards
+// =========================================================================
+async function loadTasks() {
+  try {
+    const data = await api('GET', '/tasks');
+    const container = document.getElementById('task-cards');
+    container.innerHTML = '';
+    data.tasks.forEach(t => {
+      const card = document.createElement('div');
+      card.className = `task-card ${t.id === currentTask ? 'active' : ''}`;
+      card.onclick = () => { currentTask = t.id; loadTasks(); };
+      card.innerHTML = `
+        <div class="diff diff-${t.difficulty}">${t.difficulty}</div>
+        <div style="font-weight:600;margin:6px 0">${t.name}</div>
+        <div style="font-size:.78rem;color:var(--fg2)">${t.description}</div>
+        <div style="margin-top:8px;font-size:.72rem;color:var(--fg3)">
+          ${t.start} → ${t.destination} · ${t.max_steps} steps · pass ≥${t.passing_score}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  } catch(e) { console.error(e); }
+}
+
+// =========================================================================
+// Graph Rendering
+// =========================================================================
+let graphData = null;
+
+async function loadGraph() {
+  try { graphData = await api('GET', '/api/v1/graph'); } catch(e) { return; }
+  renderGraph();
+}
+
+function renderGraph() {
+  if (!graphData) return;
+  const container = document.getElementById('graph-canvas');
+  const W = container.clientWidth || 700;
+  const H = container.clientHeight || 480;
+  const PAD = 50;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  // Defs
+  svg += `<defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto"><path d="M0,0 L10,3 L0,6z" fill="rgba(255,255,255,.15)"/></marker>
+  </defs>`;
+
+  const pos = (code) => {
+    const p = CITY_POS[code];
+    if (!p) return {x:W/2,y:H/2};
+    return { x: PAD + p.x*(W-2*PAD), y: PAD + p.y*(H-2*PAD) };
+  };
+
+  // Route edges highlight
+  const routeSet = new Set();
+  if (obs && obs.visited) {
+    for (let i = 0; i < obs.visited.length - 1; i++) {
+      routeSet.add(obs.visited[i]+'-'+obs.visited[i+1]);
+      routeSet.add(obs.visited[i+1]+'-'+obs.visited[i]);
+    }
+  }
+
+  // Edges
+  graphData.edges.forEach(e => {
+    const p1 = pos(e.from), p2 = pos(e.to);
+    const isActive = routeSet.has(e.from+'-'+e.to);
+    svg += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" class="edge-line ${isActive?'active':''}" ${isActive?'filter="url(#glow)"':''}/>`;
+    svg += `<text x="${(p1.x+p2.x)/2}" y="${(p1.y+p2.y)/2-6}" class="edge-label">${e.distance}km</text>`;
+  });
+
+  // Nodes
+  graphData.cities.forEach(c => {
+    const p = pos(c.code);
+    const color = GRADE_COLORS[c.grade] || '#64748b';
+    const isCurrent = obs && obs.current_city === c.code;
+    const isDest = obs && obs.destination === c.code;
+    const isVisited = obs && obs.visited && obs.visited.includes(c.code);
+    const r = isCurrent ? 28 : isDest ? 24 : 20;
+
+    if (isCurrent) {
+      svg += `<circle cx="${p.x}" cy="${p.y}" r="${r+8}" fill="none" stroke="${color}" stroke-width="2" opacity=".3"><animate attributeName="r" values="${r+6};${r+14};${r+6}" dur="2s" repeatCount="indefinite"/></circle>`;
+    }
+    if (isDest) {
+      svg += `<circle cx="${p.x}" cy="${p.y}" r="${r+5}" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4 4"><animateTransform attributeName="transform" type="rotate" from="0 ${p.x} ${p.y}" to="360 ${p.x} ${p.y}" dur="8s" repeatCount="indefinite"/></circle>`;
+    }
+
+    svg += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${color}" opacity="${isVisited?.9:.55}" class="node-circle" filter="${isCurrent?'url(#glow)':''}"/>`;
+    svg += `<text x="${p.x}" y="${p.y+1}" class="node-label" font-size="${isCurrent?15:13}">${c.code}</text>`;
+    svg += `<text x="${p.x}" y="${p.y+r+14}" class="node-sublabel">${c.name}</text>`;
+    svg += `<text x="${p.x}" y="${p.y-r-6}" class="node-sublabel" fill="${color}">AQI ${c.aqi}</text>`;
+  });
+
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
+
+// =========================================================================
+// UI Updates
+// =========================================================================
+function updateStats() {
+  if (!obs) return;
+  const credits = obs.exposure_credits;
+  const el = document.getElementById('s-credits');
+  el.textContent = credits;
+  el.className = 'stat-value ' + (credits >= 100 ? 'green' : credits >= 50 ? 'yellow' : 'red');
+
+  document.getElementById('s-steps').textContent = `${obs.steps_taken} / ${obs.max_steps}`;
+  document.getElementById('s-exposure').textContent = obs.total_exposure.toFixed(1);
+}
+
+function updateRouteTrail() {
+  if (!obs) return;
+  const container = document.getElementById('route-trail');
+  container.innerHTML = '';
+  obs.visited.forEach((c, i) => {
+    if (i > 0) {
+      const arrow = document.createElement('span');
+      arrow.className = 'route-arrow';
+      arrow.textContent = '→';
+      container.appendChild(arrow);
+    }
+    const node = document.createElement('span');
+    const isCurr = c === obs.current_city;
+    const isDest = c === obs.destination;
+    node.className = `route-node ${isCurr?'current':''} ${isDest?'dest':''}`;
+    node.textContent = c;
+    container.appendChild(node);
+  });
+  // Show destination if not reached
+  if (!obs.visited.includes(obs.destination)) {
+    const arrow = document.createElement('span');
+    arrow.className = 'route-arrow';
+    arrow.textContent = '···→';
+    container.appendChild(arrow);
+    const node = document.createElement('span');
+    node.className = 'route-node dest';
+    node.textContent = obs.destination;
+    container.appendChild(node);
+  }
+}
+
+function updateNeighbors() {
+  const tbody = document.getElementById('neighbors-body');
+  if (!obs || done) {
+    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--fg3)">${done?'Episode finished':'Start an episode'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = '';
+  obs.neighbors.forEach(n => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${n.city}</strong> <span style="color:var(--fg2)">${n.city_name}</span></td>
+      <td><span class="aqi-chip aqi-${n.grade}">${n.grade} · ${n.aqi}</span></td>
+      <td style="color:${n.credit_delta>=0?'var(--accent)':'var(--danger)'};font-weight:600">${n.credit_delta>=0?'+':''}${n.credit_delta}</td>
+      <td class="mono" style="font-size:.78rem">${n.distance}km</td>
+      <td><button class="move-btn" onclick="makeMove('${n.city}')">Move →</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function addLog(text, type='') {
+  logs.push({text, type});
+  const panel = document.getElementById('log-panel');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry fade-in';
+  entry.innerHTML = text;
+  panel.appendChild(entry);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+function clearLogs() {
+  logs = [];
+  document.getElementById('log-panel').innerHTML = '';
+}
+
+// =========================================================================
+// Actions
+// =========================================================================
+async function startEpisode() {
+  try {
+    clearLogs();
+    document.getElementById('grade-panel').style.display = 'none';
+    document.getElementById('s-score').textContent = '—';
+    document.getElementById('s-score').className = 'stat-value';
+
+    obs = await api('POST', '/reset', { task_id: currentTask });
+    done = false;
+    stepCount = 0;
+
+    addLog(`<span class="step-badge">INIT</span> Episode started: <strong>${currentTask}</strong> · ${obs.current_city_name} → ${obs.destination_name}`);
+    toast('Episode started!', 'success');
+
+    document.getElementById('btn-start').disabled = true;
+    document.getElementById('btn-auto').disabled = false;
+    document.getElementById('btn-reset').disabled = false;
+
+    updateStats();
+    updateRouteTrail();
+    updateNeighbors();
+    renderGraph();
+  } catch(e) { console.error(e); }
+}
+
+async function makeMove(city) {
+  if (done) return;
+  try {
+    const result = await api('POST', '/step', { action: { city } });
+    obs = result.observation;
+    done = result.done;
+    stepCount++;
+
+    const reward = result.reward;
+    const rewardClass = reward >= 0 ? 'reward-pos' : 'reward-neg';
+    const info = result.info || {};
+
+    addLog(`<span class="step-badge">STEP ${stepCount}</span> ${obs.visited[obs.visited.length-2]} → <strong>${city}</strong> (${info.segment_grade || '?'}) · <span class="${rewardClass}">reward ${reward>=0?'+':''}${reward.toFixed(1)}</span> · credits ${obs.exposure_credits}`);
+
+    updateStats();
+    updateRouteTrail();
+    updateNeighbors();
+    renderGraph();
+
+    if (done) await finishEpisode();
+  } catch(e) { console.error(e); }
+}
+
+async function finishEpisode() {
+  try {
+    const grade = await api('GET', '/grade');
+    document.getElementById('btn-auto').disabled = true;
+
+    const scoreEl = document.getElementById('s-score');
+    scoreEl.textContent = grade.score.toFixed(4);
+    scoreEl.className = 'stat-value ' + (grade.score >= .7 ? 'green' : grade.score >= .4 ? 'yellow' : 'red');
+
+    addLog(`<span class="step-badge" style="background:rgba(59,130,246,.15);color:var(--info)">END</span> Score: <strong>${grade.score.toFixed(4)}</strong> · Grade: <strong>${grade.grade_letter}</strong> · ${grade.reached_destination ? '✅ Reached' : '❌ Missed'}`);
+
+    // Show grade panel
+    const panel = document.getElementById('grade-panel');
+    panel.style.display = 'block';
+    panel.querySelector('#grade-content').innerHTML = `
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px">
+        <div class="grade-badge grade-${grade.grade_letter}">${grade.grade_letter}</div>
+        <div>
+          <div style="font-size:2rem;font-weight:700">${grade.score.toFixed(4)}</div>
+          <div style="font-size:.78rem;color:var(--fg2)">${grade.reached_destination ? 'Destination Reached' : 'Destination Missed'}</div>
+        </div>
+      </div>
+      <div style="font-size:.82rem;color:var(--fg2);line-height:1.7">${grade.feedback}</div>
+      <div class="score-bar" style="margin-top:16px">
+        <div class="score-bar-fill" style="width:${grade.score*100}%;background:${grade.score>=.7?'var(--accent)':grade.score>=.4?'var(--warn)':'var(--danger)'}"></div>
+      </div>
+      <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.8rem">
+        <div>Credits Final: <strong>${grade.exposure_credits_final}</strong></div>
+        <div>Steps Used: <strong>${grade.steps_used}</strong></div>
+        <div>Exposure: <strong>${grade.total_exposure.toFixed(1)}</strong></div>
+        <div>Route: <strong>${grade.route.join(' → ')}</strong></div>
+      </div>
+    `;
+
+    toast(`Episode complete! Score: ${grade.score.toFixed(4)} (${grade.grade_letter})`, grade.score >= .5 ? 'success' : 'error');
+  } catch(e) { console.error(e); }
+}
+
+async function resetEnv() {
+  done = true;
+  obs = null;
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-auto').disabled = true;
+  document.getElementById('btn-reset').disabled = true;
+  document.getElementById('s-credits').textContent = '100';
+  document.getElementById('s-credits').className = 'stat-value green';
+  document.getElementById('s-steps').textContent = '0 / 15';
+  document.getElementById('s-exposure').textContent = '0.0';
+  document.getElementById('s-score').textContent = '—';
+  document.getElementById('s-score').className = 'stat-value';
+  document.getElementById('route-trail').innerHTML = '<span style="color:var(--fg3);font-size:.82rem">Press Start to begin</span>';
+  document.getElementById('neighbors-body').innerHTML = '<tr><td colspan="5" style="color:var(--fg3)">Start an episode to see moves</td></tr>';
+  document.getElementById('grade-panel').style.display = 'none';
+  clearLogs();
+  renderGraph();
+  toast('Environment reset', 'info');
+}
+
+async function runAutoAgent() {
+  if (done || !obs) return;
+  document.getElementById('btn-auto').disabled = true;
+  document.querySelectorAll('.move-btn').forEach(b => b.disabled = true);
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  while (!done) {
+    // Simple heuristic: prefer destination if neighbor, else lowest AQI unvisited
+    const neighbors = obs.neighbors || [];
+    const dest = obs.destination;
+    const visited = new Set(obs.visited);
+
+    let choice = null;
+    // Direct to destination?
+    const directDest = neighbors.find(n => n.city === dest);
+    if (directDest) { choice = dest; }
+    else {
+      // Unvisited, sorted by AQI
+      const unvisited = neighbors.filter(n => !visited.has(n.city)).sort((a,b) => a.aqi - b.aqi);
+      if (unvisited.length) choice = unvisited[0].city;
+      else choice = neighbors.sort((a,b) => a.aqi - b.aqi)[0]?.city;
+    }
+
+    if (!choice) break;
+    await makeMove(choice);
+    await sleep(600);
+  }
+}
+
+// =========================================================================
+// Init
+// =========================================================================
+loadTasks();
+loadGraph();
+</script>
+</body>
+</html>

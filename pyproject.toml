@@ -1,0 +1,40 @@
+[project]
+name = "econav-exposure-credit"
+version = "1.0.0"
+description = "EcoNav AI — RL environment for pollution-aware city navigation with exposure credits"
+authors = [
+    { name = "EcoNav AI Team" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn>=0.30",
+    "requests>=2.32",
+    "pydantic>=2.7",
+    "numpy>=1.26",
+    "openai>=1.0.0",
+    "openenv-core>=0.2.0",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["packages*", "apps*", "server*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
