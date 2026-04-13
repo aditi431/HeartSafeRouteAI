@@ -1,52 +1,98 @@
-🫀 HeartSafe Route AI
-AI-Powered Emergency Navigation System for Heart Patients (OpenEnv RL Environment)
+# 🫀 HeartSafe Route AI  
+### AI-Powered Emergency Navigation System for Heart Patients (OpenEnv RL Environment)
 
-🚨 An OpenEnv-compliant Reinforcement Learning environment where AI agents learn to save lives by choosing the safest and fastest cardiac emergency routes under real-world constraints like traffic, pollution, and hospital capacity.
+---
 
-🌍 Project Overview
+## 🚨 Overview
 
-HeartSafe Route AI transforms emergency navigation into a real-world reinforcement learning problem.
+HeartSafe Route AI is an **OpenEnv-compliant Reinforcement Learning environment** where AI agents learn to make life-saving decisions by selecting the **safest and fastest cardiac emergency routes** under real-world constraints such as:
 
-Instead of simple shortest-path routing, agents must optimize:
+- 🚦 Traffic conditions  
+- 🫁 Air pollution levels  
+- 🏥 Hospital capacity & availability  
+- ⏱️ Emergency response time  
+- ❤️ Patient survival probability  
 
-⏱️ Fastest arrival time
-🫁 Lowest pollution exposure
-🚦 Traffic-aware routing
-🏥 Hospital availability & cardiac readiness
-❤️ Patient survival safety score
+This system simulates **real-world ambulance routing and smart healthcare logistics**, going beyond traditional shortest-path navigation.
 
-This environment simulates real emergency decision-making systems used in ambulance routing and smart healthcare logistics.
+---
 
-🧠 Why This Project Matters
+## 🌍 Project Vision
 
-In real emergencies, reaching the nearest hospital is NOT always the safest option.
+In real emergencies, the nearest hospital is not always the safest option.
 
-HeartSafe Route AI models real-world complexity:
+HeartSafe Route AI models this complexity by forcing AI agents to balance:
 
-A nearby hospital may be full
-A fast route may pass through high pollution zones
-A low-traffic route may still be medically unsafe
-AI must balance speed vs survival probability
+- ⏱️ Fastest arrival time  
+- 🫁 Lowest pollution exposure  
+- 🚦 Traffic-aware routing  
+- 🏥 Hospital readiness & capacity  
+- ❤️ Patient survival safety score  
 
-👉 This makes it a high-value RL benchmark environment for healthcare AI systems
+👉 The goal is to build a **realistic healthcare decision-making RL benchmark environment**.
 
-⚙️ Tech Stack
-Backend (OpenEnv RL Engine)
-Python 3.10+
-FastAPI
-NumPy
-Scikit-learn (simulation + scoring logic)
-Frontend (Hackathon Demo UI)
-React + Vite
-TailwindCSS
-Leaflet.js (interactive maps)
-Chart.js (AI analytics visualization)
-Infra
-Docker (containerized execution)
-Hugging Face Spaces (deployment target)
-OpenEnv specification compliance
-📁 Project Structure
-## 📁 Project Structure
+---
+
+## 🧠 Why This Project Matters
+
+Traditional routing systems fail in critical medical emergencies because they ignore real-world constraints.
+
+This project introduces AI-driven decision making where:
+
+- A nearby hospital may be full  
+- A fast route may pass through polluted zones  
+- A low-traffic route may still be medically unsafe  
+- AI must optimize survival probability, not just distance  
+
+👉 This makes it a **high-impact reinforcement learning benchmark for healthcare AI systems**.
+
+---
+
+## ⚙️ Tech Stack
+
+### 🧠 Backend (OpenEnv RL Engine)
+- Python 3.10+
+- FastAPI
+- NumPy
+- Scikit-learn (simulation + scoring logic)
+
+### 🎨 Frontend (Hackathon Demo UI)
+- React + Vite
+- TailwindCSS
+- Leaflet.js (interactive maps)
+- Chart.js (AI analytics visualization)
+
+### ☁️ Infrastructure
+- Docker (containerized execution)
+- Hugging Face Spaces (deployment target)
+- OpenEnv specification compliant architecture
+
+---
+
+## 🏗️ System Modules
+
+- 🚑 **Routing Agent** → RL-based decision engine  
+- 🏥 **Hospital Service** → Capacity + emergency readiness simulation  
+- 🚦 **Traffic Service** → Dynamic congestion modeling  
+- 🫁 **Pollution Service** → Air quality impact zones  
+- 🌍 **Simulation Engine** → Environment state generator  
+- 📊 **Reward System** → Survival-based scoring function  
+
+---
+
+## 🎯 Key Features
+
+- 🧠 Reinforcement Learning-based route optimization  
+- 🚑 Emergency ambulance simulation environment  
+- 🏥 Dynamic hospital capacity modeling  
+- 🚦 Real-time traffic simulation  
+- 🫁 Pollution-aware navigation  
+- ❤️ Survival probability reward system  
+- 📊 AI decision analytics dashboard  
+
+---
+
+## 📦 Project Structure
 
 ```bash
 HeartSafe-Route-AI/
@@ -72,19 +118,30 @@ HeartSafe-Route-AI/
 ├── Dockerfile
 └── README.md
 ```
-🧩 OpenEnv Compliance (Core Design)
+# 🫀 OpenEnv Compliant RL Environment
 
-This environment strictly follows OpenEnv spec:
+An AI-powered emergency navigation system where reinforcement learning agents learn to choose optimal hospital routes under real-world constraints like traffic, pollution, and hospital capacity.
 
-🔁 Required API
+---
+
+## 🧩 OpenEnv Compliance (Core Design)
+
+This environment strictly follows the OpenEnv specification.
+
+---
+
+## 🔁 Required API
+
+```python
 reset() -> Observation
 step(action) -> Observation, Reward, Done, Info
 state() -> CurrentState
-📦 Observation Space
+```
+## 📦 Observation Space
 
 Each observation includes:
 
-{
+{{
   "user_location": [lat, lng],
   "hospitals": [...],
   "traffic_map": [...],
@@ -92,7 +149,8 @@ Each observation includes:
   "time_elapsed": float,
   "emergency_level": int
 }
-🎮 Action Space
+
+## 🎮 Action Space
 
 Agent selects:
 
@@ -106,12 +164,16 @@ Agent selects:
       "hospital_capacity": float
   }
 }
-🏥 Core Simulation Features
+
+## 🏥 Core Simulation Features
+
 🚑 Realistic Emergency Environment
+
 Live hospital capacity simulation
 Traffic congestion generator
 Pollution exposure heatmaps
 Dynamic route scoring engine
+
 🧪 RL Tasks (3 Difficulty Levels)
 🟢 Task 1 — Emergency Fast Route (Easy)
 Objective: Reach nearest hospital quickly
