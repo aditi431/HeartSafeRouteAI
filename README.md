@@ -166,40 +166,59 @@ Agent selects:
 }
 
 ## 🏥 Core Simulation Features
+## 🚑 Realistic Emergency Environment
 
-🚑 Realistic Emergency Environment
+A simulated AI environment for emergency healthcare routing with dynamic real-world constraints.
 
-Live hospital capacity simulation
-Traffic congestion generator
-Pollution exposure heatmaps
-Dynamic route scoring engine
+### Features
+- Live hospital capacity simulation  
+- Traffic congestion generator  
+- Pollution exposure heatmaps  
+- Dynamic route scoring engine  
 
-🧪 RL Tasks (3 Difficulty Levels)
-🟢 Task 1 — Emergency Fast Route (Easy)
-Objective: Reach nearest hospital quickly
-Constraints: Basic traffic + distance
-🟡 Task 2 — Safe Hospital Selection (Medium)
-Objective: Avoid overcrowded hospitals
-Includes: capacity + traffic + distance balancing
-🔴 Task 3 — Survival Optimization (Hard)
-Objective: Maximize patient survival probability
+---
 
-Includes:
+## 🧪 RL Tasks (3 Difficulty Levels)
 
-pollution exposure penalty
-traffic delay risk
-hospital readiness score
-time-critical constraints
-🧮 Reward Function Design
+### 🟢 Task 1 — Emergency Fast Route (Easy)
+**Objective:** Reach nearest hospital quickly  
+**Constraints:**
+- Basic traffic
+- Distance optimization  
 
-Reward is continuous and multi-objective:
+---
 
+### 🟡 Task 2 — Safe Hospital Selection (Medium)
+**Objective:** Avoid overcrowded hospitals  
+**Includes:**
+- Capacity awareness  
+- Traffic conditions  
+- Distance balancing  
+
+---
+
+### 🔴 Task 3 — Survival Optimization (Hard)
+**Objective:** Maximize patient survival probability  
+
+**Includes:**
+- Pollution exposure penalty  
+- Traffic delay risk  
+- Hospital readiness score  
+- Time-critical constraints  
+
+---
+
+## 🧮 Reward Function Design
+
+### Reward Formula
+```python
 reward =
     (w1 * -travel_time)
   + (w2 * hospital_availability)
   + (w3 * -traffic_delay)
   + (w4 * -pollution_exposure)
   + (w5 * survival_probability)
+```
 Penalties:
 High pollution → negative reward
 Delays → exponential penalty
