@@ -102,7 +102,6 @@ Agent selects:
       "hospital_capacity": float
   }
 }
-
 🏥 Core Simulation Features
 🚑 Realistic Emergency Environment
 Live hospital capacity simulation
@@ -210,7 +209,7 @@ Required environment variables:
 OPENAI_API_KEY=your_key
 API_BASE_URL=your_endpoint
 MODEL_NAME=gpt-4o-mini
-HF_TOKEN=your_token
+
 Run:
 python inference.py
 Output format:
@@ -219,7 +218,6 @@ Output format:
 [STEP] Action selected
 [STEP] Reward received
 [END] Score: 0.82
-
 🐳 Docker Deployment
 Build:
 docker build -t heartsafe-ai .
@@ -244,7 +242,6 @@ Hospital capacity-aware routing
 Pollution + traffic + survival modeling
 OpenEnv-compliant structured evaluation system
 Agent grading with deterministic scoring
-
 🏁 Final Goal
 
 This environment enables AI agents to learn:
