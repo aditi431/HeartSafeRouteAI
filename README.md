@@ -46,15 +46,18 @@ Docker (containerized execution)
 Hugging Face Spaces (deployment target)
 OpenEnv specification compliance
 📁 Project Structure
+## 📁 Project Structure
+
+```bash
 HeartSafe-Route-AI/
 │
 ├── backend/
 │   ├── main.py                # FastAPI app (OpenEnv server)
-│   ├── routing_agent.py      # AI routing policy + reward logic
-│   ├── hospital_service.py   # Hospital simulation engine
-│   ├── traffic_service.py    # Traffic generator
-│   ├── pollution_service.py  # Pollution zone engine
-│   └── simulation.py         # RL environment core
+│   ├── routing_agent.py       # AI routing policy + reward logic
+│   ├── hospital_service.py    # Hospital simulation engine
+│   ├── traffic_service.py     # Traffic generator
+│   ├── pollution_service.py   # Pollution zone engine
+│   └── simulation.py          # RL environment core
 │
 ├── frontend/
 │   ├── src/
@@ -64,10 +67,11 @@ HeartSafe-Route-AI/
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │
-├── openenv.yaml              # OpenEnv configuration
-├── inference.py              # Baseline evaluation script
+├── openenv.yaml               # OpenEnv configuration
+├── inference.py               # Baseline evaluation script
 ├── Dockerfile
 └── README.md
+```
 🧩 OpenEnv Compliance (Core Design)
 
 This environment strictly follows OpenEnv spec:
