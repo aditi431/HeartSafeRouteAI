@@ -219,30 +219,44 @@ reward =
   + (w4 * -pollution_exposure)
   + (w5 * survival_probability)
 ```
-Penalties:
-High pollution → negative reward
-Delays → exponential penalty
-Full hospital → strong penalty
-🤖 AI Routing Agent
+## 🧮 Reward Function Penalties
+
+- High pollution → negative reward  
+- Delays → exponential penalty  
+- Full hospital → strong penalty  
+
+---
+
+## 🤖 AI Routing Agent
 
 The baseline agent simulates intelligent decision-making:
 
-Evaluates all hospital options
-Computes weighted risk score
-Chooses optimal survival path
-Learns trade-offs between speed vs safety
-📊 Grading System (OpenEnv Agent Evaluator)
+- Evaluates all hospital options  
+- Computes weighted risk score  
+- Chooses optimal survival path  
+- Learns trade-offs between speed vs safety  
+
+---
+
+## 📊 Grading System (OpenEnv Agent Evaluator)
 
 Each task returns a score:
 
-0.0 → failed mission
-0.5 → partial success
-1.0 → optimal route selected
-📡 API Endpoints (FastAPI)
-🏥 GET /hospitals
+- **0.0** → Failed mission  
+- **0.5** → Partial success  
+- **1.0** → Optimal route selected  
+
+---
+
+## 📡 API Endpoints (FastAPI)
+
+---
+
+### 🏥 GET `/hospitals`
 
 Returns nearby hospitals:
 
+```json
 {
   "name": "City Heart Hospital",
   "lat": 23.25,
@@ -251,30 +265,39 @@ Returns nearby hospitals:
   "cardiac_specialization": true,
   "capacity": 80
 }
-🚦 GET /traffic
+```
+## 🚦 GET `/traffic`
 
 Returns traffic intensity:
 
-low
-medium
-high
-🌫️ GET /pollution
+- low  
+- medium  
+- high  
+
+---
+
+## 🌫️ GET `/pollution`
 
 Returns pollution zones:
 
-safe
-moderate
-dangerous
-🧠 POST /compute-route
+- safe  
+- moderate  
+- dangerous  
 
-Input:
+---
 
+## 🧠 POST `/compute-route`
+
+### Input
+
+```json
 {
   "user_lat": 23.2,
   "user_lng": 77.4
 }
-
-Output:
+```
+```json
+### Output:
 
 {
   "best_hospital": "...",
@@ -286,15 +309,18 @@ Output:
     "balanced": {...}
   }
 }
-🧪 Baseline Evaluation (inference.py)
+```
+## 🧪 Baseline Evaluation (`inference.py`)
 
-Runs standardized OpenEnv evaluation:
+Runs standardized OpenEnv evaluation.
 
-Required environment variables:
+### Required Environment Variables
+
+```bash
 OPENAI_API_KEY=your_key
 API_BASE_URL=your_endpoint
 MODEL_NAME=gpt-4o-mini
-
+```
 Run:
 python inference.py
 Output format:
@@ -303,24 +329,31 @@ Output format:
 [STEP] Action selected
 [STEP] Reward received
 [END] Score: 0.82
-🐳 Docker Deployment
-Build:
+
+## 🐳 Docker Deployment
+
+### Build:
 docker build -t heartsafe-ai .
 Run:
 docker run -p 7860:7860 heartsafe-ai
-🚀 Run Locally
+
+### 🚀 Run Locally
 Backend
 uvicorn backend.main:app --reload
 Frontend
 cd frontend
 npm install
 npm run dev
-☁️ Hugging Face Deployment
+
+## ☁️ Hugging Face Deployment
+
 Fully containerized OpenEnv Space
 Auto-start FastAPI server
 Validated with openenv validate
 Compatible with 2 vCPU / 8GB RAM constraints
-🧠 Key Innovations
+
+## 🧠 Key Innovations
+
 Real-world emergency healthcare RL simulation
 Multi-objective reward system (not toy environment)
 Hospital capacity-aware routing
