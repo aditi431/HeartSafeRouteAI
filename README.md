@@ -354,13 +354,14 @@ Compatible with 2 vCPU / 8GB RAM constraints
 
 ## 🧠 Key Innovations
 
-Real-world emergency healthcare RL simulation
-Multi-objective reward system (not toy environment)
-Hospital capacity-aware routing
-Pollution + traffic + survival modeling
-OpenEnv-compliant structured evaluation system
-Agent grading with deterministic scoring
-🏁 Final Goal
+- Real-world emergency healthcare RL simulation  
+- Multi-objective reward system (not toy environment)  
+- Hospital capacity-aware routing  
+- Pollution + traffic + survival modeling  
+- OpenEnv-compliant structured evaluation system  
+- Agent grading with deterministic scoring
+
+## 🏁 Final Goal
 
 This environment enables AI agents to learn:
 
