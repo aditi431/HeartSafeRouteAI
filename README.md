@@ -1,368 +1,160 @@
-# 🫀 HeartSafe Route AI  
-### AI-Powered Emergency Navigation System for Heart Patients (OpenEnv RL Environment)
+# EcoNav AI — Exposure Credit Navigator
 
----
+> **OpenEnv-compliant RL Environment** for training AI agents to navigate Indian cities while minimising pollution exposure and maximising Exposure Credits.
 
-## 🚨 Overview
+## Overview
 
-HeartSafe Route AI is an **OpenEnv-compliant Reinforcement Learning environment** where AI agents learn to make life-saving decisions by selecting the **safest and fastest cardiac emergency routes** under real-world constraints such as:
+EcoNav AI simulates a real-world task: **pollution-aware route planning across Indian cities**. An AI agent navigates a graph of 9 Indian cities (Delhi, Jaipur, Agra, Varanasi, Lucknow, Kolkata, Chandigarh, Bhopal, Patna) making sequential routing decisions. Each city has a realistic AQI (Air Quality Index) profile, and the agent earns or loses **Exposure Credits** based on the air quality of its chosen path.
 
-- 🚦 Traffic conditions  
-- 🫁 Air pollution levels  
-- 🏥 Hospital capacity & availability  
-- ⏱️ Emergency response time  
-- ❤️ Patient survival probability  
+This environment addresses a genuine public health challenge — air pollution kills over 2 million people annually in India. Training agents to find clean-air routes has immediate real-world value.
 
-This system simulates **real-world ambulance routing and smart healthcare logistics**, going beyond traditional shortest-path navigation.
+## Key Features
 
----
+- **Real-world domain**: Pollution-aware navigation using realistic Indian city AQI data
+- **OpenEnv spec compliant**: Full `step()` / `reset()` / `state()` / `grade()` API
+- **3 tasks with difficulty progression**: Easy → Medium → Hard
+- **Rich reward shaping**: Credit-based rewards, distance penalties, destination bonuses
+- **Deterministic grading**: Reproducible scores 0.0-1.0
+- **Interactive frontend**: Live graph visualization, manual play, and auto-agent mode
+- **Self-contained**: No external API calls required (embedded AQI profiles)
 
-## 🌍 Project Vision
+## Action & Observation Spaces
 
-In real emergencies, the nearest hospital is not always the safest option.
+### Observation Space
 
-HeartSafe Route AI models this complexity by forcing AI agents to balance:
+| Field | Type | Description |
+|-------|------|-------------|
+| `current_city` | string | Current city code (A-I) |
+| `destination` | string | Target city code |
+| `visited` | list[str] | Cities already visited |
+| `neighbors` | list[dict] | Available moves with AQI, grade, credits, distance |
+| `exposure_credits` | int | Current credit balance (starts at 100) |
+| `total_exposure` | float | Cumulative pollution exposure |
+| `steps_taken` | int | Steps used so far |
+| `max_steps` | int | Maximum steps allowed |
+| `done` | bool | Episode finished? |
 
-- ⏱️ Fastest arrival time  
-- 🫁 Lowest pollution exposure  
-- 🚦 Traffic-aware routing  
-- 🏥 Hospital readiness & capacity  
-- ❤️ Patient survival safety score  
+### Action Space
 
-👉 The goal is to build a **realistic healthcare decision-making RL benchmark environment**.
+| Field | Type | Description |
+|-------|------|-------------|
+| `city` | string | City code to move to (must be a valid neighbor) |
 
----
+### Reward Function
 
-## 🧠 Why This Project Matters
+```
+reward = credit_delta (AQI-grade based: +10 to -50)
+       + distance_penalty (-distance/1000)
+       + destination_bonus (+100 if reached)
+       + revisit_penalty (-10 if city already visited)
+       + timeout_penalty (-50 if steps exhausted without reaching destination)
+```
 
-Traditional routing systems fail in critical medical emergencies because they ignore real-world constraints.
+### Grade System
 
-This project introduces AI-driven decision making where:
+| AQI Range | Grade | Credits/Segment |
+|-----------|-------|-----------------|
+| ≤ 50      | A     | +10             |
+| 51-100    | B     | +5              |
+| 101-150   | C     | -5              |
+| 151-200   | D     | -15             |
+| 201-300   | E     | -30             |
+| 300+      | F     | -50             |
 
-- A nearby hospital may be full  
-- A fast route may pass through polluted zones  
-- A low-traffic route may still be medically unsafe  
-- AI must optimize survival probability, not just distance  
+## Tasks
 
-👉 This makes it a **high-impact reinforcement learning benchmark for healthcare AI systems**.
+### Task 1: Easy — Delhi to Kolkata (15 steps)
+Navigate from Delhi (A) to Kolkata (F) with a generous step budget. Multiple paths available. Passing score: 0.5.
 
----
+### Task 2: Medium — Delhi to Kolkata (8 steps)
+Same origin/destination but with a tight step budget. Requires balancing speed vs. clean-air routes. Passing score: 0.6.
 
-## ⚙️ Tech Stack
+### Task 3: Hard — Agra to Kolkata (6 steps)
+Start from heavily-polluted Agra (C), reach Kolkata (F) in just 6 steps while maximizing credits. Very challenging — requires optimal pollution-dodging strategy. Passing score: 0.7.
 
-### 🧠 Backend (OpenEnv RL Engine)
+## Scoring Breakdown
+
+Final score is 0.0-1.0, computed as:
+- **Destination reached** (40%): Binary — did the agent reach the target?
+- **Credit performance** (30%): Final credits relative to starting balance
+- **Exposure minimization** (20%): Lower cumulative exposure = better
+- **Step efficiency** (10%): Fewer steps = higher efficiency score
+
+## Setup & Usage
+
+### Prerequisites
 - Python 3.10+
-- FastAPI
-- NumPy
-- Scikit-learn (simulation + scoring logic)
+- Docker (optional, for containerized deployment)
 
-### 🎨 Frontend (Hackathon Demo UI)
-- React + Vite
-- TailwindCSS
-- Leaflet.js (interactive maps)
-- Chart.js (AI analytics visualization)
-
-### ☁️ Infrastructure
-- Docker (containerized execution)
-- Hugging Face Spaces (deployment target)
-- OpenEnv specification compliant architecture
-
----
-
-## 🏗️ System Modules
-
-- 🚑 **Routing Agent** → RL-based decision engine  
-- 🏥 **Hospital Service** → Capacity + emergency readiness simulation  
-- 🚦 **Traffic Service** → Dynamic congestion modeling  
-- 🫁 **Pollution Service** → Air quality impact zones  
-- 🌍 **Simulation Engine** → Environment state generator  
-- 📊 **Reward System** → Survival-based scoring function  
-
----
-
-## 🎯 Key Features
-
-- 🧠 Reinforcement Learning-based route optimization  
-- 🚑 Emergency ambulance simulation environment  
-- 🏥 Dynamic hospital capacity modeling  
-- 🚦 Real-time traffic simulation  
-- 🫁 Pollution-aware navigation  
-- ❤️ Survival probability reward system  
-- 📊 AI decision analytics dashboard  
-
----
-
-## 📦 Project Structure
+### Local Development
 
 ```bash
-HeartSafe-Route-AI/
-│
-├── backend/
-│   ├── main.py                # FastAPI app (OpenEnv server)
-│   ├── routing_agent.py       # AI routing policy + reward logic
-│   ├── hospital_service.py    # Hospital simulation engine
-│   ├── traffic_service.py     # Traffic generator
-│   ├── pollution_service.py   # Pollution zone engine
-│   └── simulation.py          # RL environment core
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│
-├── openenv.yaml               # OpenEnv configuration
-├── inference.py               # Baseline evaluation script
-├── Dockerfile
-└── README.md
+# Clone and install
+git clone <repo-url>
+cd econav-exposure-credit
+pip install -e .
+
+# Run the server
+python server/app.py
+# Server starts at http://localhost:7860
+
+# Open frontend
+# Visit http://localhost:7860/app in your browser
 ```
-# 🫀 OpenEnv Compliant RL Environment
 
-An AI-powered emergency navigation system where reinforcement learning agents learn to choose optimal hospital routes under real-world constraints like traffic, pollution, and hospital capacity.
-
----
-
-## 🧩 OpenEnv Compliance (Core Design)
-
-This environment strictly follows the OpenEnv specification.
-
----
-
-## 🔁 Required API
-
-```python
-reset() -> Observation
-step(action) -> Observation, Reward, Done, Info
-state() -> CurrentState
-```
-## 📦 Observation Space
-
-Each observation includes:
-
-{{
-  "user_location": [lat, lng],
-  "hospitals": [...],
-  "traffic_map": [...],
-  "pollution_zones": [...],
-  "time_elapsed": float,
-  "emergency_level": int
-}
-
-## 🎮 Action Space
-
-Agent selects:
-
-{
-  "selected_route": "fastest | safest | balanced",
-  "target_hospital_id": int,
-  "routing_priority_weights": {
-      "time": float,
-      "traffic": float,
-      "pollution": float,
-      "hospital_capacity": float
-  }
-}
-
-## 🏥 Core Simulation Features
-## 🚑 Realistic Emergency Environment
-
-A simulated AI environment for emergency healthcare routing with dynamic real-world constraints.
-
-### Features
-- Live hospital capacity simulation  
-- Traffic congestion generator  
-- Pollution exposure heatmaps  
-- Dynamic route scoring engine  
-
----
-
-## 🧪 RL Tasks (3 Difficulty Levels)
-
-### 🟢 Task 1 — Emergency Fast Route (Easy)
-**Objective:** Reach nearest hospital quickly  
-**Constraints:**
-- Basic traffic
-- Distance optimization  
-
----
-
-### 🟡 Task 2 — Safe Hospital Selection (Medium)
-**Objective:** Avoid overcrowded hospitals  
-**Includes:**
-- Capacity awareness  
-- Traffic conditions  
-- Distance balancing  
-
----
-
-### 🔴 Task 3 — Survival Optimization (Hard)
-**Objective:** Maximize patient survival probability  
-
-**Includes:**
-- Pollution exposure penalty  
-- Traffic delay risk  
-- Hospital readiness score  
-- Time-critical constraints  
-
----
-
-## 🧮 Reward Function Design
-
-### Reward Formula
-```python
-reward =
-    (w1 * -travel_time)
-  + (w2 * hospital_availability)
-  + (w3 * -traffic_delay)
-  + (w4 * -pollution_exposure)
-  + (w5 * survival_probability)
-```
-## 🧮 Reward Function Penalties
-
-- High pollution → negative reward  
-- Delays → exponential penalty  
-- Full hospital → strong penalty  
-
----
-
-## 🤖 AI Routing Agent
-
-The baseline agent simulates intelligent decision-making:
-
-- Evaluates all hospital options  
-- Computes weighted risk score  
-- Chooses optimal survival path  
-- Learns trade-offs between speed vs safety  
-
----
-
-## 📊 Grading System (OpenEnv Agent Evaluator)
-
-Each task returns a score:
-
-- **0.0** → Failed mission  
-- **0.5** → Partial success  
-- **1.0** → Optimal route selected  
-
----
-
-## 📡 API Endpoints (FastAPI)
-
----
-
-### 🏥 GET `/hospitals`
-
-Returns nearby hospitals:
-
-```json
-{
-  "name": "City Heart Hospital",
-  "lat": 23.25,
-  "lng": 77.41,
-  "distance": 3.2,
-  "cardiac_specialization": true,
-  "capacity": 80
-}
-```
-## 🚦 GET `/traffic`
-
-Returns traffic intensity:
-
-- low  
-- medium  
-- high  
-
----
-
-## 🌫️ GET `/pollution`
-
-Returns pollution zones:
-
-- safe  
-- moderate  
-- dangerous  
-
----
-
-## 🧠 POST `/compute-route`
-
-### Input
-
-```json
-{
-  "user_lat": 23.2,
-  "user_lng": 77.4
-}
-```
-```json
-### Output:
-
-{
-  "best_hospital": "...",
-  "estimated_time": 12,
-  "safety_score": 0.87,
-  "routes": {
-    "fastest": {...},
-    "safest": {...},
-    "balanced": {...}
-  }
-}
-```
-## 🧪 Baseline Evaluation (`inference.py`)
-
-Runs standardized OpenEnv evaluation.
-
-### Required Environment Variables
+### Docker
 
 ```bash
-OPENAI_API_KEY=your_key
-API_BASE_URL=your_endpoint
-MODEL_NAME=gpt-4o-mini
+docker build -t econav-ai .
+docker run -p 7860:7860 econav-ai
 ```
-Run:
+
+### Run Inference
+
+```bash
+export HF_TOKEN="your-token"
+export API_BASE_URL="https://router.huggingface.co/v1"
+export MODEL_NAME="meta-llama/Llama-3.1-8B-Instruct"
+export ENV_URL="http://localhost:7860"
+
 python inference.py
-Output format:
-[START]
-[STEP] Observation processed
-[STEP] Action selected
-[STEP] Reward received
-[END] Score: 0.82
+```
 
-## 🐳 Docker Deployment
+### API Endpoints
 
-### Build:
-docker build -t heartsafe-ai .
-Run:
-docker run -p 7860:7860 heartsafe-ai
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/reset` | POST | Reset environment, start new episode |
+| `/step` | POST | Execute action, get observation + reward |
+| `/state` | GET | Get current episode state |
+| `/grade` | GET | Grade completed episode (0.0-1.0) |
+| `/tasks` | GET | List all available tasks |
+| `/tasks/{id}` | GET | Get specific task details |
+| `/api/v1/graph` | GET | Get city graph for visualization |
+| `/docs` | GET | Interactive API documentation |
 
-### 🚀 Run Locally
-Backend
-uvicorn backend.main:app --reload
-Frontend
-cd frontend
-npm install
-npm run dev
+## Baseline Scores
 
-## ☁️ Hugging Face Deployment
+| Task | Heuristic Agent | LLM Agent (Llama-3.1-8B) |
+|------|-----------------|--------------------------|
+| easy_route | ~0.72 | ~0.78 |
+| medium_route | ~0.55 | ~0.65 |
+| hard_pollution_dodge | ~0.42 | ~0.52 |
 
-Fully containerized OpenEnv Space
-Auto-start FastAPI server
-Validated with openenv validate
-Compatible with 2 vCPU / 8GB RAM constraints
+## City Network
 
-## 🧠 Key Innovations
+```
+           G (Chandigarh, AQI ~75)
+          / 
+    A (Delhi, AQI ~185) ——— B (Jaipur, AQI ~120)
+     \                       \
+      C (Agra, AQI ~170) ——— D (Varanasi, AQI ~155) ——— I (Patna, AQI ~160)
+       \                    / \                            \
+        E (Lucknow, ~140) /   F (Kolkata, AQI ~95)         F
+         \               /
+          H (Bhopal, ~90)
+```
 
-- Real-world emergency healthcare RL simulation  
-- Multi-objective reward system (not toy environment)  
-- Hospital capacity-aware routing  
-- Pollution + traffic + survival modeling  
-- OpenEnv-compliant structured evaluation system  
-- Agent grading with deterministic scoring
+## License
 
-## 🏁 Final Goal
-
-This environment enables AI agents to learn:
-
-👉 How to save lives under real-world emergency constraints
+MIT
