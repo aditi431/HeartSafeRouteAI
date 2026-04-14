@@ -1,6 +1,17 @@
-# EcoNav AI — Exposure Credit Navigator
+# EcoNav HeartSafe Route  AI — Exposure Credit Navigator
 
 > **OpenEnv-compliant RL Environment** for training AI agents to navigate Indian cities while minimising pollution exposure and maximising Exposure Credits.
+> **HeartSafe Route AI**  extends the EcoNav concept toward AI-driven emergency healthcare routing.
+
+Instead of simply navigating cities, agents would learn to choose the safest hospital routes for cardiac emergencies, considering:
+
+-hospital capacity
+-traffic congestion
+-pollution exposure
+-treatment readiness
+-survival probability
+
+This transforms the environment into a real-world healthcare AI benchmark for emergency logistics systems. 
 
 ## Overview
 
@@ -154,6 +165,139 @@ python inference.py
          \               /
           H (Bhopal, ~90)
 ```
+## 🔬 Extending EcoNav to Implement HeartSafe Route AI
+The current EcoNav AI environment focuses on pollution-aware navigation using AQI-based reward signals and exposure credits.
+
+However, the same RL environment architecture can be extended to build the full HeartSafe Route AI system, transforming the project into a medical emergency routing benchmark.
+
+Below is a proposed roadmap for implementing the full system.
+
+## 🏥 1. Hospital Simulation Layer
+
+Introduce a hospital service module that simulates real-world healthcare facilities.
+
+Each hospital node would contain attributes such as:
+
+-hospital name
+-location coordinates
+-ICU availability
+-cardiac specialization
+-emergency readiness score
+-real-time capacity
+
+Example hospital representation:
+{
+  "name": "City Heart Hospital",
+  "lat": 23.25,
+  "lng": 77.41,
+  "cardiac_specialization": true,
+  "capacity": 80,
+  "available_beds": 12,
+  "readiness_score": 0.85
+}
+This allows the RL agent to evaluate which hospital is actually capable of handling a cardiac emergency.
+
+## 🚦 2. Dynamic Traffic Modeling
+
+Add a traffic simulation engine that generates route congestion dynamically.
+
+Traffic states may include:
+
+-low traffic
+-moderate congestion
+-severe congestion
+
+Traffic data could be generated using:
+
+probabilistic simulation models
+historical congestion datasets
+real-time APIs (future integration)
+
+This helps agents balance travel time vs survival probability.
+
+## 🌫 3. Pollution Exposure Modeling
+
+The existing AQI-based pollution model in EcoNav can be expanded into geographic pollution zones.
+
+Features may include:
+
+-pollution heatmaps across city regions
+-dynamic AQI variations during time-of-day
+-exposure penalties for polluted routes
+
+This ensures the agent considers patient respiratory risk during transport.
+
+## 🚑 4. Emergency Routing Agent
+
+A dedicated RL routing agent can be implemented to optimize emergency decisions.
+
+The agent must simultaneously evaluate:
+
+-travel time
+-hospital capacity
+-pollution exposure
+-traffic conditions
+-patient severity level
+
+Possible algorithms include:
+
+-Deep Q-Learning (DQN)
+-PPO (Proximal Policy Optimization)
+-Multi-objective Reinforcement Learning
+
+## ❤️ 5. Survival Probability Modeling
+
+A medical survival model can be introduced to estimate patient outcome likelihood.
+
+Survival probability may depend on:
+
+-ambulance travel time
+-hospital readiness
+-pollution exposure during transport
+-severity of cardiac condition
+
+Example simplified function:
+survival_probability =
+    base_survival
+    - time_penalty
+    - pollution_penalty
+    + hospital_readiness_bonus
+The RL agent would then maximize survival probability instead of just minimizing distance.   
+
+## 📊 6. Multi-Objective Reward System
+
+The reward function could combine multiple emergency factors:
+```
+reward =
+    (-travel_time)
+  + (hospital_availability_score)
+  - (traffic_delay)
+  - (pollution_exposure)
+  + (patient_survival_probability)
+This creates a realistic trade-off between speed, safety, and hospital readiness.
+```
+## 🌍 7. Real-World Data Integration (Future Work)
+
+The system could be enhanced using real-world datasets such as:
+
+AQI data from environmental monitoring systems
+hospital availability datasets
+live traffic data
+emergency response statistics
+
+This would allow the platform to evolve into a research-grade healthcare routing benchmark.
+
+## 🧠 Long-Term Vision
+
+The ultimate goal of EcoNav HeartSafe Route AI is to develop an AI system capable of supporting:
+
+-intelligent ambulance routing
+-emergency hospital selection
+-pollution-aware patient transport
+-AI-driven healthcare logistics
+
+Such systems could eventually assist smart city infrastructure and emergency response networks.
+
 
 ## License
 
