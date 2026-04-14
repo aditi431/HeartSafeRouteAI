@@ -292,10 +292,10 @@ This would allow the platform to evolve into a research-grade healthcare routing
 
 The ultimate goal of EcoNav HeartSafe Route AI is to develop an AI system capable of supporting:
 
--intelligent ambulance routing
--emergency hospital selection
--pollution-aware patient transport
--AI-driven healthcare logistics
+- intelligent ambulance routing
+- emergency hospital selection
+- pollution-aware patient transport
+- AI-driven healthcare logistics
 
 Such systems could eventually assist smart city infrastructure and emergency response networks.
 
