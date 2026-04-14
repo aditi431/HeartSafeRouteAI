@@ -1,7 +1,8 @@
 # EcoNav HeartSafe Route  AI — Exposure Credit Navigator
 
-> **OpenEnv-compliant RL Environment** for training AI agents to navigate Indian cities while minimising pollution exposure and maximising Exposure Credits.
-> **HeartSafe Route AI**  extends the EcoNav concept toward AI-driven emergency healthcare routing.
+ **OpenEnv-compliant RL Environment** for training AI agents to navigate Indian cities while minimising pollution exposure and maximising Exposure Credits.
+
+ **HeartSafe Route AI**  extends the EcoNav concept toward AI-driven emergency healthcare routing.
 
 Instead of simply navigating cities, agents would learn to choose the safest hospital routes for cardiac emergencies, considering:
 
