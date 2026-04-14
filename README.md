@@ -6,11 +6,11 @@
 
 Instead of simply navigating cities, agents would learn to choose the safest hospital routes for cardiac emergencies, considering:
 
--hospital capacity
--traffic congestion
--pollution exposure
--treatment readiness
--survival probability
+- hospital capacity
+- traffic congestion
+- pollution exposure
+- treatment readiness
+- survival probability
 
 This transforms the environment into a real-world healthcare AI benchmark for emergency logistics systems. 
 
@@ -179,12 +179,12 @@ Introduce a hospital service module that simulates real-world healthcare facilit
 
 Each hospital node would contain attributes such as:
 
--hospital name
--location coordinates
--ICU availability
--cardiac specialization
--emergency readiness score
--real-time capacity
+- hospital name
+- location coordinates
+- ICU availability
+- cardiac specialization
+- emergency readiness score
+- real-time capacity
 
 Example hospital representation:
 {
@@ -204,9 +204,9 @@ Add a traffic simulation engine that generates route congestion dynamically.
 
 Traffic states may include:
 
--low traffic
--moderate congestion
--severe congestion
+- low traffic
+- moderate congestion
+- severe congestion
 
 Traffic data could be generated using:
 
@@ -222,9 +222,9 @@ The existing AQI-based pollution model in EcoNav can be expanded into geographic
 
 Features may include:
 
--pollution heatmaps across city regions
--dynamic AQI variations during time-of-day
--exposure penalties for polluted routes
+- pollution heatmaps across city regions
+- dynamic AQI variations during time-of-day
+- exposure penalties for polluted routes
 
 This ensures the agent considers patient respiratory risk during transport.
 
@@ -234,17 +234,17 @@ A dedicated RL routing agent can be implemented to optimize emergency decisions.
 
 The agent must simultaneously evaluate:
 
--travel time
--hospital capacity
--pollution exposure
--traffic conditions
--patient severity level
+- travel time
+- hospital capacity
+- pollution exposure
+- traffic conditions
+- patient severity level
 
 Possible algorithms include:
 
--Deep Q-Learning (DQN)
--PPO (Proximal Policy Optimization)
--Multi-objective Reinforcement Learning
+- Deep Q-Learning (DQN)
+- PPO (Proximal Policy Optimization)
+- Multi-objective Reinforcement Learning
 
 ## ❤️ 5. Survival Probability Modeling
 
@@ -252,10 +252,10 @@ A medical survival model can be introduced to estimate patient outcome likelihoo
 
 Survival probability may depend on:
 
--ambulance travel time
--hospital readiness
--pollution exposure during transport
--severity of cardiac condition
+- ambulance travel time
+- hospital readiness
+- pollution exposure during transport
+- severity of cardiac condition
 
 Example simplified function:
 survival_probability =
